@@ -1,0 +1,82 @@
+﻿Option Explicit
+'Script written by <Junichiro Horikawa>
+'Script copyrighted by <Junichiro Horikawa>
+'Script version 2010年10月29日 3:35:20
+
+Call Main()
+Sub Main()
+	Dim arrObjects, strObject
+	Dim arrItems, arrValues, arrResults, arrTypes(10), intType, intEachType
+	
+	arrItems = Array("Point","Point Cloud","Curve","Surface","PolySurface","Mesh","Light","Text","Block","Dot","Hatch")
+	arrValues = Array(False,False,False,False,False,False,False,False,False,False,False)
+	
+	Dim i
+	For i = 0 To 10 Step 1
+		arrTypes(i) = 0
+	Next
+	
+	arrResults = Rhino.CheckListBox (arrItems, arrValues,"Check Object Type to Select","Select by Object Type")
+	
+	If Not isArray(arrResults) Then
+		Exit Sub
+	End If
+	
+	If arrResults(0) = True Then
+		arrTypes(0) = 1
+	End If
+	If arrResults(1) = True Then
+		arrTypes(1) = 2
+	End If
+	If arrResults(2) = True Then
+		arrTypes(2) = 4
+	End If
+	If arrResults(3) = True Then
+		arrTypes(3) = 8
+	End If
+	If arrResults(4) = True Then
+		arrTypes(4) = 16
+	End If
+	If arrResults(5) = True Then
+		arrTypes(5) = 32
+	End If
+	If arrResults(6) = True Then
+		arrTypes(6) = 256
+	End If
+	If arrResults(7) = True Then
+		arrTypes(7) = 512
+	End If
+	If arrResults(8) = True Then
+		arrTypes(8) = 4096
+	End If
+	If arrResults(9) = True Then
+		arrTypes(9) = 8192
+	End If
+	If arrResults(10) = True Then
+		arrTypes(10) = 65536
+	End If
+	
+	For i = 0 To 10 Step 1
+		intType = intType+arrTypes(i)
+	Next
+	
+	
+	
+	arrObjects = Rhino.GetObjects("Select Objects",intType,,True)
+	
+	Rhino.EnableRedraw(False)
+	
+	Rhino.UnselectAllObjects
+	If isArray(arrObjects) Then
+		For Each strObject In arrObjects
+			For Each intEachType In arrTypes
+				If Rhino.ObjectType(strObject) = intEachType Then
+					Rhino.SelectObject(strObject)
+				End If
+			Next
+		Next
+	End If
+	
+	Rhino.EnableRedraw(True)
+	
+End Sub
